@@ -16,6 +16,7 @@ export interface APCourse {
   prerequisites: string;
   labRequirement: string;
   exam: string;
+  examDate: string;
 }
 
 export interface CoursesState {
@@ -97,7 +98,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding the African American Experience', 'The Role of Civil Rights in American Society', 'The Impact of Contemporary Issues'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP World History'
+          exam: 'AP World History',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'art-design-drawing',
@@ -118,7 +120,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Drawing Techniques', 'Developing Artistic Expression', 'Creating a Personal Portfolio'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Art History'
+          exam: 'AP Art History',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'art-design-2d',
@@ -139,7 +142,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Design Principles', 'Applying Digital Tools', 'Creating a Personal Design Style'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Art History'
+          exam: 'AP Art History',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'art-design-3d',
@@ -160,7 +164,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding 3D Art Forms', 'Creating Sculptures', 'Developing Installation Art'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Art History'
+          exam: 'AP Art History',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'art-history',
@@ -181,7 +186,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Art History', 'Analyzing Art Movements', 'Interpreting Artistic Styles'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Art History'
+          exam: 'AP Art History',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'biology',
@@ -207,7 +213,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Evolution', 'Energetics', 'Information Storage & Transmission', 'Systems Interactions'],
           prerequisites: 'High school biology and chemistry',
           labRequirement: '25% of time in inquiry-based labs; design experiments, analyze data, communicate results',
-          exam: '3 hours: 60 multiple-choice (50%), 6 free-response (50%)'
+          exam: '3 hours: 60 multiple-choice (50%), 6 free-response (50%)',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'calculus-ab',
@@ -228,7 +235,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Limits and Continuity', 'Differentiating Functions', 'Integrating Functions'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Calculus AB'
+          exam: 'AP Calculus AB',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'calculus-bc',
@@ -249,7 +257,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Infinite Series', 'Analyzing Parametric Equations', 'Interpreting Polar Coordinates'],
           prerequisites: 'Calculus AB',
           labRequirement: 'No lab',
-          exam: 'AP Calculus BC'
+          exam: 'AP Calculus BC',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'chemistry',
@@ -276,7 +285,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Scale, Proportion, and Quantity', 'Structure and Properties', 'Transformations', 'Energy'],
           prerequisites: 'High school chemistry and Algebra II',
           labRequirement: '25% of time in labs; at least 16 labs (6 inquiry-based)',
-          exam: '3 hours 15 min: 60 multiple-choice (50%), 7 free-response (50%)'
+          exam: '3 hours 15 min: 60 multiple-choice (50%), 7 free-response (50%)',
+          examDate: 'Tuesday, May 5, 2026 - 8:00 AM'
         },
         {
           id: 'chinese-language',
@@ -297,7 +307,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Chinese Characters', 'Developing Chinese Grammar', 'Improving Chinese Listening Skills'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Chinese Language'
+          exam: 'AP Chinese Language',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'computer-science-a',
@@ -318,7 +329,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Programming Concepts', 'Developing Object-Oriented Design', 'Learning Data Structures'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Computer Science A'
+          exam: 'AP Computer Science A',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'computer-science-principles',
@@ -339,7 +351,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Computer Science', 'Developing Problem-Solving Skills', 'Learning Algorithms'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Computer Science Principles'
+          exam: 'AP Computer Science Principles',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'economics-macro',
@@ -360,7 +373,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Macroeconomic Concepts', 'Analyzing Economic Indicators', 'Studying Fiscal Policy'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Microeconomics'
+          exam: 'AP Microeconomics',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'economics-micro',
@@ -381,7 +395,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Supply and Demand', 'Analyzing Elasticity', 'Studying Market Structures'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Microeconomics'
+          exam: 'AP Microeconomics',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'english-language',
@@ -402,7 +417,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Rhetoric', 'Developing Argumentative Skills', 'Improving Expository Writing'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP English Language'
+          exam: 'AP English Language',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'english-literature',
@@ -423,7 +439,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Close Reading', 'Developing Critical Thinking', 'Improving Argumentative Skills'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP English Literature'
+          exam: 'AP English Literature',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'environmental-science',
@@ -450,7 +467,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Energy Transfer', 'Earth System Interactions', 'Species & Environment Interactions', 'Sustainability'],
           prerequisites: 'Two years of lab science (biology + physical science), one year algebra',
           labRequirement: '25% of time in labs/fieldwork, inquiry-based',
-          exam: '2 hrs 40 min: 80 multiple-choice (60%), 3 free-response (40%)'
+          exam: '2 hrs 40 min: 80 multiple-choice (60%), 3 free-response (40%)',
+          examDate: 'Friday, May 15, 2026 - 8:00 AM'
         },
         {
           id: 'european-history',
@@ -471,7 +489,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding European History', 'Analyzing Key Events', 'Interpreting Historical Patterns'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP European History'
+          exam: 'AP European History',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'french-language',
@@ -492,7 +511,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding French Grammar', 'Developing French Listening Skills', 'Improving French Speaking Skills'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP French Language'
+          exam: 'AP French Language',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'german-language',
@@ -513,7 +533,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding German Grammar', 'Developing German Listening Skills', 'Improving German Speaking Skills'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP German Language'
+          exam: 'AP German Language',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'government-comparative',
@@ -534,7 +555,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Political Systems', 'Analyzing International Relations', 'Studying Comparative Politics'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Comparative Government'
+          exam: 'AP Comparative Government',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'government-us',
@@ -555,7 +577,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding American Government', 'Analyzing Constitutional Principles', 'Studying Political Processes'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP U.S. Government'
+          exam: 'AP U.S. Government',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'human-geography',
@@ -576,7 +599,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Human Geography', 'Analyzing Population Trends', 'Studying Globalization'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Human Geography'
+          exam: 'AP Human Geography',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'italian-language',
@@ -597,7 +621,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Italian Grammar', 'Developing Italian Listening Skills', 'Improving Italian Speaking Skills'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Italian Language'
+          exam: 'AP Italian Language',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'japanese-language',
@@ -618,7 +643,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Japanese Grammar', 'Developing Japanese Listening Skills', 'Improving Japanese Speaking Skills'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Japanese Language'
+          exam: 'AP Japanese Language',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'latin',
@@ -639,7 +665,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Latin Grammar', 'Developing Latin Listening Skills', 'Improving Latin Speaking Skills'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Latin'
+          exam: 'AP Latin',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'music-theory',
@@ -660,7 +687,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Music Fundamentals', 'Analyzing Harmony', 'Studying Form and Analysis'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Music Theory'
+          exam: 'AP Music Theory',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'physics-1',
@@ -686,7 +714,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Mechanics principles, motion, forces, energy, and systems'],
           prerequisites: 'Geometry and concurrent Algebra II',
           labRequirement: '25% of time in labs, inquiry-based',
-          exam: '3 hours: 40 multiple-choice (50%), 4 free-response (50%)'
+          exam: '3 hours: 40 multiple-choice (50%), 4 free-response (50%)',
+          examDate: 'Wednesday, May 6, 2026 - 12:00 PM'
         },
         {
           id: 'physics-2',
@@ -711,7 +740,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Energy, electricity, magnetism, light, and quantum systems'],
           prerequisites: 'AP Physics 1 or similar; concurrent Precalculus',
           labRequirement: '25% of time in labs, inquiry-based',
-          exam: '3 hours: 40 multiple-choice (50%), 4 free-response (50%)'
+          exam: '3 hours: 40 multiple-choice (50%), 4 free-response (50%)',
+          examDate: 'Thursday, May 7, 2026 - 8:00 AM'
         },
         {
           id: 'physics-c-electricity',
@@ -734,7 +764,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Electricity, magnetism, fields, and energy transfer'],
           prerequisites: 'Calculus (concurrent allowed)',
           labRequirement: '25% of time in labs, inquiry-based',
-          exam: '1.5 hours: 40 multiple-choice (50%), 4 free-response (50%)'
+          exam: '1.5 hours: 40 multiple-choice (50%), 4 free-response (50%)',
+          examDate: 'Thursday, May 14, 2026 - 12:00 PM'
         },
         {
           id: 'physics-c-mechanics',
@@ -759,7 +790,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Mechanics, motion, forces, rotation, energy'],
           prerequisites: 'Calculus (concurrent allowed)',
           labRequirement: '25% of time in labs, inquiry-based',
-          exam: '3 hours: 40 multiple-choice (50%), 4 free-response (50%)'
+          exam: '3 hours: 40 multiple-choice (50%), 4 free-response (50%)',
+          examDate: 'Wednesday, May 13, 2026 - 12:00 PM'
         },
         {
           id: 'precalculus',
@@ -780,7 +812,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Functions', 'Developing Trigonometry Skills', 'Learning Advanced Algebra'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Calculus AB'
+          exam: 'AP Calculus AB',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'psychology',
@@ -801,7 +834,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Psychology', 'Analyzing Biological Bases', 'Studying Psychological Perspectives'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Psychology'
+          exam: 'AP Psychology',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'research',
@@ -822,7 +856,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Research Design', 'Learning Data Collection Methods', 'Analyzing and Interpreting Data'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Research'
+          exam: 'AP Research',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'seminar',
@@ -843,7 +878,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Seminar Structure', 'Developing Presentation Skills', 'Improving Critical Thinking'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Seminar'
+          exam: 'AP Seminar',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'spanish-language',
@@ -864,7 +900,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Spanish Grammar', 'Developing Spanish Listening Skills', 'Improving Spanish Speaking Skills'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Spanish Language'
+          exam: 'AP Spanish Language',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'spanish-literature',
@@ -885,7 +922,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Spanish Literature', 'Analyzing Spanish Culture', 'Studying Spanish Language'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Spanish Literature'
+          exam: 'AP Spanish Literature',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'statistics',
@@ -906,7 +944,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Statistics', 'Learning Data Collection Methods', 'Analyzing and Interpreting Data'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP Statistics'
+          exam: 'AP Statistics',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'us-history',
@@ -927,7 +966,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding U.S. History', 'Analyzing Key Events', 'Interpreting Historical Patterns'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP U.S. History'
+          exam: 'AP U.S. History',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         },
         {
           id: 'world-history',
@@ -948,7 +988,8 @@ export const useCoursesStore = create<CoursesState>((set, get) => ({
           bigIdeas: ['Understanding Modern World History', 'Analyzing Key Events', 'Interpreting Historical Patterns'],
           prerequisites: 'None',
           labRequirement: 'No lab',
-          exam: 'AP World History'
+          exam: 'AP World History',
+          examDate: 'Monday, May 4, 2026 - 8:00 AM'
         }
       ];
 

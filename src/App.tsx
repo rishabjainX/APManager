@@ -117,6 +117,22 @@ function CourseDetailModal({ course, isOpen, onClose }: { course: any; isOpen: b
                 <div className="text-xl">{renderStars(course.stars)}</div>
               </div>
               
+              {/* Exam Date */}
+              {course.examDate && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3">Exam Date</h3>
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl">📅</div>
+                      <div>
+                        <div className="font-semibold text-blue-900">{course.examDate}</div>
+                        <div className="text-sm text-blue-700">Mark your calendar!</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {/* Prerequisites */}
               {course.prerequisites && course.prerequisites !== 'None' && (
                 <div className="mb-6">
@@ -204,9 +220,14 @@ function CourseDetailModal({ course, isOpen, onClose }: { course: any; isOpen: b
             <button className="flex-1 bg-primary text-primary-foreground py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors font-medium">
               Add to Backpack
             </button>
-            <button className="flex-1 bg-secondary text-secondary-foreground py-3 px-4 rounded-lg hover:bg-secondary/80 transition-colors font-medium">
+            <a 
+              href={`https://apcentral.collegeboard.org/courses/ap-${course.name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-algebra-based$/, '').replace(/electricity-magnetism/, 'electricity-and-magnetism')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 bg-secondary text-secondary-foreground py-3 px-4 rounded-lg hover:bg-secondary/80 transition-colors font-medium text-center"
+            >
               View Details
-            </button>
+            </a>
           </div>
         </div>
       </div>
