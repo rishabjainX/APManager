@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useCoursesStore } from './store/coursesSlice';
+import { useBackpackStore } from './store/backpackSlice';
 import { subjects, allTags } from './data/coursesData';
-import { Star, X } from 'lucide-react';
+import { Star, X, Briefcase } from 'lucide-react';
 
 // Simple Sidebar component
 function Sidebar() {
@@ -131,10 +132,9 @@ function CourseDetailModal({ course, isOpen, onClose }: { course: any; isOpen: b
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
                     <div className="flex items-center gap-3">
                       <div className="text-2xl">📅</div>
-                      <div>
-                        <div className="font-semibold text-blue-900">{course.examDate}</div>
-                        <div className="text-sm text-blue-700">Mark your calendar!</div>
-                      </div>
+                                              <div>
+                          <div className="font-semibold text-blue-900">{course.examDate}</div>
+                        </div>
                     </div>
                   </div>
                 </div>
@@ -224,8 +224,23 @@ function CourseDetailModal({ course, isOpen, onClose }: { course: any; isOpen: b
           
           {/* Action Buttons */}
           <div className="flex gap-3 mt-8">
-            <button className="flex-1 bg-primary text-primary-foreground py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors font-medium">
-              Add to Backpack
+            <button 
+              onClick={() => {
+                const { addCourse, removeCourse, isInBackpack } = useBackpackStore.getState();
+                if (isInBackpack(course.id)) {
+                  removeCourse(course.id);
+                } else {
+                  addCourse(course.id);
+                }
+              }}
+              className={`flex-1 py-3 px-4 rounded-lg transition-all duration-200 font-medium flex items-center justify-center gap-2 ${
+                useBackpackStore.getState().isInBackpack(course.id)
+                  ? 'bg-green-600 text-white hover:bg-green-700'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90'
+              }`}
+            >
+              <Briefcase size={20} />
+              {useBackpackStore.getState().isInBackpack(course.id) ? 'In Backpack' : 'Add to Backpack'}
             </button>
             <a 
               href={`https://apcentral.collegeboard.org/courses/ap-${course.id}`}
@@ -291,8 +306,24 @@ function CourseCard({ course, onClick }: { course: any; onClick: () => void }) {
         )}
       </div>
       
-      <button className="w-full bg-primary text-primary-foreground py-2 px-4 rounded hover:bg-primary/90 transition-colors">
-        Add to Backpack
+      <button 
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent opening modal
+          const { addCourse, removeCourse, isInBackpack } = useBackpackStore.getState();
+          if (isInBackpack(course.id)) {
+            removeCourse(course.id);
+          } else {
+            addCourse(course.id);
+          }
+        }}
+        className={`w-full py-2 px-4 rounded transition-all duration-200 flex items-center justify-center gap-2 ${
+          useBackpackStore.getState().isInBackpack(course.id)
+            ? 'bg-green-600 text-white hover:bg-green-700'
+            : 'bg-primary text-primary-foreground hover:bg-primary/90'
+        }`}
+      >
+        <Briefcase size={16} />
+        {useBackpackStore.getState().isInBackpack(course.id) ? 'In Backpack' : 'Add to Backpack'}
       </button>
     </div>
   );
@@ -473,10 +504,103 @@ function Explore() {
 }
 
 function Backpack() {
+  const { selectedCourses, removeCourse, clearBackpack } = useBackpackStore();
+  const { courses, fetchCourses } = useCoursesStore();
+  
+  // Ensure courses are loaded
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+  
+  // Get the full course objects for selected course IDs
+  const backpackCourses = courses.filter(course => selectedCourses.includes(course.id));
+  
+  // Debug logging
+  console.log('Backpack - selectedCourses:', selectedCourses);
+  console.log('Backpack - courses length:', courses.length);
+  console.log('Backpack - backpackCourses length:', backpackCourses.length);
+  
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-foreground mb-6">My Backpack</h1>
-      <p className="text-muted-foreground">Your selected AP courses will appear here</p>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-foreground">My Backpack</h1>
+        {selectedCourses.length > 0 && (
+          <button
+            onClick={clearBackpack}
+            className="text-sm text-red-600 hover:text-red-800 transition-colors"
+          >
+            Clear All
+          </button>
+        )}
+      </div>
+      
+      {selectedCourses.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🎒</div>
+          <p className="text-muted-foreground text-lg mb-4">Your backpack is empty</p>
+          <p className="text-muted-foreground">Browse courses and add them to your backpack to get started!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {backpackCourses.length === 0 ? (
+            <div className="col-span-full text-center py-8">
+              <p className="text-muted-foreground">Debug: No courses found in backpackCourses</p>
+              <p className="text-sm text-muted-foreground">Selected IDs: {selectedCourses.join(', ')}</p>
+              <p className="text-sm text-muted-foreground">Available course IDs: {courses.map(c => c.id).join(', ')}</p>
+            </div>
+          ) : (
+            backpackCourses.map(course => (
+            <div key={course.id} className="bg-card border rounded-lg p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="text-4xl">{course.emoji}</div>
+                <button
+                  onClick={() => removeCourse(course.id)}
+                  className="text-red-500 hover:text-red-700 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <h3 className="text-xl font-semibold mb-2">{course.name}</h3>
+              <p className="text-sm text-muted-foreground mb-3">{course.subject}</p>
+              
+              <p className="text-sm text-foreground mb-4 line-clamp-3">{course.description}</p>
+              
+              <div className="flex gap-2 mb-4 overflow-hidden">
+                {course.tags.slice(0, 3).map((tag: string, index: number) => (
+                  <span 
+                    key={index}
+                    className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full whitespace-nowrap flex-shrink-0"
+                  >
+                    {tag}
+                  </span>
+                ))}
+                {course.tags.length > 3 && (
+                  <span className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full whitespace-nowrap flex-shrink-0">
+                    +{course.tags.length - 3} more
+                  </span>
+                )}
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-muted-foreground">
+                  {course.meanScore} avg • {course.passRate}% pass
+                </div>
+                <div className="flex gap-1">
+                  {[...Array(5)].map((_, index) => (
+                    <Star
+                      key={index}
+                      size={16}
+                      className={index < course.stars ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))
+          )}
+        </div>
+      )}
     </div>
   );
 }
