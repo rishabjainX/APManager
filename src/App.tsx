@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useCoursesStore } from './store/coursesSlice';
+import { subjects, allTags } from './data/coursesData';
 import { Star, X } from 'lucide-react';
 
 // Simple Sidebar component
@@ -40,9 +41,13 @@ function CourseDetailModal({ course, isOpen, onClose }: { course: any; isOpen: b
 
   const parseExamFormat = (examString: string) => {
     // Extract duration, MCQ count, and FRQ count from exam string
+    // Format: "3 hours: 60 multiple choice (50%), 6 free-response (50%)"
     const durationMatch = examString.match(/(\d+(?:\s*hours?)?(?:\s*\d+\s*min)?)/i);
-    const mcqMatch = examString.match(/(\d+)\s*multiple-choice/);
-    const frqMatch = examString.match(/(\d+)\s*free-response/);
+    
+    // More flexible regex for multiple choice - handles various formats
+    // Look for patterns like "60 multiple choice", "80 multiple choice", etc.
+    const mcqMatch = examString.match(/(\d+)\s*(?:multiple\s*choice|multiple-choice|MC)/i);
+    const frqMatch = examString.match(/(\d+)\s*(?:free-response|free\s*response|FRQ)/i);
     
     let duration = durationMatch ? durationMatch[1] : 'Varies';
     
@@ -65,6 +70,8 @@ function CourseDetailModal({ course, isOpen, onClose }: { course: any; isOpen: b
     if (!match) return 'bg-gray-100 text-gray-700';
     
     const percentage = parseInt(match[1]);
+    
+
     
     if (percentage >= 25) return 'bg-red-100 text-red-800 border-red-200'; // Very heavy
     if (percentage >= 20) return 'bg-orange-100 text-orange-800 border-orange-200'; // Heavy
@@ -221,7 +228,7 @@ function CourseDetailModal({ course, isOpen, onClose }: { course: any; isOpen: b
               Add to Backpack
             </button>
             <a 
-              href={`https://apcentral.collegeboard.org/courses/ap-${course.name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-algebra-based$/, '').replace(/electricity-magnetism/, 'electricity-and-magnetism')}`}
+              href={`https://apcentral.collegeboard.org/courses/ap-${course.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 bg-secondary text-secondary-foreground py-3 px-4 rounded-lg hover:bg-secondary/80 transition-colors font-medium text-center"
@@ -268,18 +275,18 @@ function CourseCard({ course, onClick }: { course: any; onClick: () => void }) {
       
       <p className="text-sm text-foreground mb-4 line-clamp-3">{course.description}</p>
       
-      <div className="flex flex-wrap gap-2 mb-4">
-        {course.tags.slice(0, 4).map((tag: string, index: number) => (
+      <div className="flex gap-2 mb-4 overflow-hidden">
+        {course.tags.slice(0, 3).map((tag: string, index: number) => (
           <span 
             key={index}
-            className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full"
+            className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full whitespace-nowrap flex-shrink-0"
           >
             {tag}
           </span>
         ))}
-        {course.tags.length > 4 && (
-          <span className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full">
-            +{course.tags.length - 4} more
+        {course.tags.length > 3 && (
+          <span className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full whitespace-nowrap flex-shrink-0">
+            +{course.tags.length - 3} more
           </span>
         )}
       </div>
@@ -311,15 +318,11 @@ function Dashboard() {
         </div>
         <div className="bg-card p-6 rounded-lg border">
           <h3 className="text-lg font-semibold mb-2">Available Subjects</h3>
-          <p className="text-3xl font-bold text-primary">
-            {new Set(courses.map(c => c.subject)).size}
-          </p>
+          <p className="text-3xl font-bold text-primary">{subjects.length}</p>
         </div>
         <div className="bg-card p-6 rounded-lg border">
           <h3 className="text-lg font-semibold mb-2">Total Tags</h3>
-          <p className="text-3xl font-bold text-primary">
-            {courses.reduce((total, course) => total + course.tags.length, 0)}
-          </p>
+          <p className="text-3xl font-bold text-primary">{allTags.length}</p>
         </div>
       </div>
     </div>
@@ -346,7 +349,7 @@ function Explore() {
     fetchCourses();
   }, [fetchCourses]);
   
-  const subjects = ['All', ...Array.from(new Set(filteredCourses.map(c => c.subject)))];
+  const availableSubjects = ['All', ...subjects];
   const difficultyOptions = ['All', 'Easy (1-2 stars)', 'Medium (3 stars)', 'Hard (4-5 stars)'];
   
   const handleCourseClick = (course: any) => {
@@ -389,7 +392,7 @@ function Explore() {
               onChange={(e) => setSelectedSubject(e.target.value)}
               className="w-full px-3 py-2 border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              {subjects.map(subject => (
+              {availableSubjects.map(subject => (
                 <option key={subject} value={subject}>{subject}</option>
               ))}
             </select>
@@ -399,8 +402,24 @@ function Explore() {
           <div>
             <label className="block text-sm font-medium mb-2">Difficulty</label>
             <select
-              value={selectedDifficulty}
-              onChange={(e) => setSelectedDifficulty(e.target.value)}
+              value={
+                selectedDifficulty === 0 ? 'All' :
+                selectedDifficulty === 1 ? 'Easy (1-2 stars)' :
+                selectedDifficulty === 3 ? 'Medium (3 stars)' :
+                selectedDifficulty === 4 ? 'Hard (4-5 stars)' : 'All'
+              }
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === 'All') {
+                  setSelectedDifficulty(0);
+                } else if (value === 'Easy (1-2 stars)') {
+                  setSelectedDifficulty(1);
+                } else if (value === 'Medium (3 stars)') {
+                  setSelectedDifficulty(3);
+                } else if (value === 'Hard (4-5 stars)') {
+                  setSelectedDifficulty(4);
+                }
+              }}
               className="w-full px-3 py-2 border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             >
               {difficultyOptions.map(difficulty => (

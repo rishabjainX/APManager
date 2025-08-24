@@ -1,242 +1,158 @@
-# AP Manager
+# AP Course Manager
 
-A production-ready desktop application for students to manage AP coursework. Built with React, TypeScript, and Vite, featuring a clean, keyboard-friendly interface optimized for desktop use.
+A comprehensive desktop application for students to manage AP coursework, built with React, TypeScript, and Vite.
 
-## Features
+## 🚀 Features
 
-### 🎒 AP Class Explorer + Backpack
-- **Course Discovery**: Browse and search through all available AP courses
-- **Smart Filtering**: Filter by subject category (Science, Math, History, English, CS, World Language, Other)
-- **Personal Backpack**: Add courses to your personal collection with custom difficulty ratings
-- **Status Management**: Track courses as "planned", "in-progress", or "completed"
-- **Bulk Actions**: Reorder, remove, or update multiple courses at once
+- **AP Course Explorer**: Browse all available AP courses with detailed information
+- **Interactive Course Cards**: Hover effects and detailed modals for each course
+- **Smart Filtering**: Search by name, subject, difficulty, and tags
+- **Unit Weightings**: Color-coded unit importance based on exam weight
+- **Exam Information**: Dates, formats, and requirements for each course
+- **College Board Integration**: Direct links to official course descriptions
 
-### 📝 Unit-aligned Notes with AP Tags
-- **Markdown Support**: Rich text editor with full markdown capabilities
-- **AP Topic Integration**: Automatic tag suggestions based on official AP Course and Exam Descriptions (CEDs)
-- **Smart Organization**: Notes automatically organized by course and unit
-- **Offline Capable**: All notes saved locally via IndexedDB
-- **Import/Export**: Backup and restore your notes as JSON
+## 🛠️ CSV Data Management
 
-### 🎯 Practice Hub by Unit
-- **FRQ & MCQ Practice**: Access past Free Response Questions and Multiple Choice Questions
-- **Unit-based Organization**: Practice questions organized by course units
-- **Progress Tracking**: Monitor your accuracy and time spent per unit
-- **Practice Sessions**: Timed practice sessions with detailed analytics
-- **Performance Analytics**: Track streaks and improvement over time
+The app now uses a **CSV-based data system** that makes it easy to:
+- Add new courses
+- Update existing course information
+- Manage practice questions and resources
+- Keep data synchronized across the app
 
-### 📊 Progress & Planning Dashboard
-- **Visual Progress**: See your progress across all courses at a glance
-- **Unit Coverage**: Track which units you've completed notes for
-- **Practice Analytics**: Monitor your performance trends
-- **Quick Actions**: Fast access to common tasks
+### 📁 File Structure
 
-## Tech Stack
+```
+src/
+├── data/
+│   ├── courses.csv          # Main course data
+│   └── coursesData.ts       # CSV import logic
+├── utils/
+│   ├── csvImporter.ts       # CSV parsing utilities
+│   └── csvHelpers.ts        # CSV export/validation helpers
+└── store/
+    └── coursesSlice.ts      # Zustand store using CSV data
+```
 
-- **Frontend**: React 18 + TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS + shadcn/ui components
-- **State Management**: Zustand
-- **Routing**: React Router v6
-- **Storage**: localForage (IndexedDB wrapper)
-- **UI Components**: Radix UI primitives
-- **Icons**: Lucide React
-- **Testing**: Vitest + Testing Library
+### 📊 CSV Format
 
-## Getting Started
+Your `courses.csv` file should have these columns:
+
+```csv
+id,name,subject,meanScore,passRate,description,emoji,tags,units,bigIdeas,prerequisites,labRequirement,exam,examDate
+```
+
+#### Example Row:
+```csv
+biology,Biology,Sciences,3.15,68.3,"Introductory college-level biology...",🧬,"life sciences,systems,ecology,genetics","Chemistry of Life:8-11%,Cells:10-13%","Evolution,Energetics,Information Storage & Transmission",High school biology and chemistry,25% of time in labs,"3 hours: 60 multiple choice (50%), 6 free-response (50%)","Monday, May 4, 2026 - 8:00 AM"
+```
+
+### 🔧 Adding New Courses
+
+1. **Open `src/data/courses.csv`**
+2. **Add a new row** following the format above
+3. **Save the file** - the app automatically reloads the data
+4. **No code changes needed!**
+
+### 📝 CSV Field Details
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `id` | string | Unique identifier (lowercase, no spaces) | `biology`, `calculus-bc` |
+| `name` | string | Course name | `Biology`, `Calculus BC` |
+| `subject` | string | Subject category | `Sciences`, `Mathematics` |
+| `meanScore` | number | Average AP exam score | `3.15` |
+| `passRate` | number | Percentage of students who pass | `68.3` |
+| `description` | string | Course description | `"Introductory college-level..."` |
+| `emoji` | string | Course emoji | `🧬`, `📊` |
+| `tags` | string | Comma-separated tags | `"life sciences,systems,ecology"` |
+| `units` | string | Unit:weighting pairs | `"Unit 1:10-15%,Unit 2:20-25%"` |
+| `bigIdeas` | string | Comma-separated big ideas | `"Evolution,Energetics"` |
+| `prerequisites` | string | Course prerequisites | `High school biology` |
+| `labRequirement` | string | Lab requirements | `25% of time in labs` |
+| `exam` | string | Exam format | `"3 hours: 60 MC, 6 FRQ"` |
+| `examDate` | string | Exam date | `"Monday, May 4, 2026 - 8:00 AM"` |
+
+## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
 
 ### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd apmanager
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**
-   Navigate to `http://localhost:5173`
-
-### Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run typecheck` - Run TypeScript type checking
-- `npm run lint` - Run ESLint
-- `npm run format` - Format code with Prettier
-- `npm run test` - Run tests
-- `npm run test:ui` - Run tests with UI
-- `npm run test:coverage` - Run tests with coverage
-
-## Data Architecture
-
-### AP Framework Adapter
-The app uses a flexible adapter pattern for AP course data:
-
-- **Static Adapter** (Current): Mock data for 4 popular AP courses with 2 units each
-- **Remote Adapter** (Future): Placeholder for College Board API integration
-
-### Data Models
-```typescript
-// Course Structure
-interface APCourse {
-  id: string;
-  name: string;
-  subject: APSubject;
-  units: APUnit[];
-}
-
-// Unit Structure  
-interface APUnit {
-  id: string;
-  title: string;
-  topics: APTopic[];
-}
-
-// Note Structure
-interface Note {
-  id: string;
-  courseId: string;
-  unitId: string;
-  title: string;
-  bodyMarkdown: string;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-```
-
-### Persistence Strategy
-- **localForage**: Wraps IndexedDB for cross-browser compatibility
-- **Versioned Schemas**: Supports data migration between app versions
-- **Offline First**: All data stored locally, no internet required
-
-## Keyboard Shortcuts
-
-- `⌘/Ctrl + K` - Open command palette
-- `/` - Quick search (when focused on search inputs)
-- `←/→` - Navigate back/forward
-
-## Data Import/Export
-
-### Export
-1. Go to Settings → Data Management
-2. Click "Export All Data"
-3. Download will include notes and practice attempts
-
-### Import
-1. Go to Settings → Data Management
-2. Paste exported JSON data
-3. Click "Import Data"
-4. Data will be merged with existing content
-
-## Customization
-
-### Adding New AP Courses
-1. Edit `src/adapters/apFramework.ts`
-2. Add course data to `staticCourses` array
-3. Include units and topics following the established pattern
-
-### Styling
-- Uses Tailwind CSS with custom CSS variables
-- Dark/light mode support
-- Responsive design optimized for desktop
-
-## Development
-
-### Project Structure
-```
-src/
-├── adapters/          # Data adapters (AP Framework, FRQ/MCQ)
-├── components/        # Reusable UI components
-│   ├── ui/           # Base UI components (Button, Card, etc.)
-│   └── ...           # Feature-specific components
-├── pages/            # Route components
-├── store/            # Zustand state management
-├── utils/            # Utility functions
-└── test/             # Test setup and utilities
-```
-
-### State Management
-- **coursesSlice**: AP course data and search
-- **backpackSlice**: User's selected courses
-- **notesSlice**: Note management and persistence
-- **practiceSlice**: Practice attempts and analytics
-
-### Adding New Features
-1. Create component in appropriate directory
-2. Add to store if state management needed
-3. Update routing if new page required
-4. Add to command palette if global access needed
-
-## Testing
-
-The app includes comprehensive testing setup:
-
-- **Unit Tests**: Test individual functions and components
-- **Integration Tests**: Test component interactions
-- **E2E Tests**: Test complete user workflows
-
-Run tests with:
 ```bash
-npm run test
+git clone <your-repo>
+cd apmanager
+npm install
+npm run dev
 ```
 
-## Deployment
-
-### Build for Production
+### Development
 ```bash
-npm run build
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run test         # Run tests
 ```
 
-### Preview Production Build
-```bash
-npm run preview
-```
+## 🔄 Data Updates
 
-The built files will be in the `dist/` directory, ready for deployment to any static hosting service.
+### Adding New Courses
+1. Edit `src/data/courses.csv`
+2. Add new row with all required fields
+3. Save file - app automatically updates
 
-## Future Enhancements
+### Updating Existing Courses
+1. Find the course row in `courses.csv`
+2. Modify any field values
+3. Save file - changes appear immediately
 
-- **Cloud Sync**: Optional cloud storage with Supabase
-- **Real AP Data**: Integration with College Board's official CED API
-- **Study Recommendations**: AI-powered study suggestions
-- **Collaborative Features**: Share notes and study groups
-- **Mobile App**: React Native companion app
+### Adding Practice Questions
+Future feature: Add a `practice-questions.csv` file with:
+- Question text
+- Course ID
+- Unit
+- Question type (MCQ/FRQ)
+- Answer and explanation
 
-## Contributing
+## 🎯 Next Features
+
+- **Backpack System**: Save and organize selected courses
+- **Notes Editor**: Markdown notes with AP tags
+- **Practice Hub**: FRQ and MCQ practice sessions
+- **Progress Tracking**: Monitor study progress per course
+- **Study Planner**: Weekly schedules and reminders
+
+## 🐛 Troubleshooting
+
+### CSV Import Issues
+- Check that all required fields are filled
+- Ensure proper CSV formatting (commas, quotes)
+- Verify file encoding is UTF-8
+
+### Data Not Loading
+- Check browser console for errors
+- Verify CSV file path is correct
+- Restart development server
+
+### Type Errors
+- Run `npx tsc --noEmit` to check for issues
+- Ensure CSV data matches expected format
+
+## 📚 Resources
+
+- [AP Central](https://apcentral.collegeboard.org/) - Official AP resources
+- [College Board](https://collegeboard.org/) - AP program information
+- [Vite Documentation](https://vitejs.dev/) - Build tool docs
+- [React Documentation](https://react.dev/) - React framework docs
+
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests for new functionality
+4. Test thoroughly
 5. Submit a pull request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License.
-
-## Support
-
-For questions or issues:
-- Check the documentation
-- Review existing issues
-- Create a new issue with detailed information
-
----
-
-Built with ❤️ for AP students everywhere.
