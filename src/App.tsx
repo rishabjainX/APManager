@@ -3,13 +3,50 @@ import { useState, useEffect } from 'react';
 import { useCoursesStore } from './store/coursesSlice';
 import { useBackpackStore } from './store/backpackSlice';
 import { subjects, allTags } from './data/coursesData';
-import { Star, X, Briefcase } from 'lucide-react';
+import { Star, X, Briefcase, Sun, Moon, Monitor } from 'lucide-react';
+import { useTheme } from './components/ThemeProvider';
 
 // Simple Sidebar component
 function Sidebar() {
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    if (theme === 'light') {
+      setTheme('dark');
+    } else if (theme === 'dark') {
+      setTheme('system');
+    } else {
+      setTheme('light');
+    }
+  };
+
+  const getThemeIcon = () => {
+    if (theme === 'light') return <Sun size={20} />;
+    if (theme === 'dark') return <Moon size={20} />;
+    return <Monitor size={20} />;
+  };
+
+  const getThemeLabel = () => {
+    if (theme === 'light') return 'Light';
+    if (theme === 'dark') return 'Dark';
+    return 'System';
+  };
+
   return (
     <div className="w-64 bg-card border-r min-h-screen p-4">
-      <h1 className="text-xl font-bold mb-6">AP Manager</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-xl font-bold">AP Manager</h1>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">{getThemeLabel()}</span>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg hover:bg-accent transition-all duration-200 hover:scale-110"
+            title={`Current theme: ${getThemeLabel()}. Click to cycle through themes.`}
+          >
+            {getThemeIcon()}
+          </button>
+        </div>
+      </div>
       <nav className="space-y-2">
         <a href="/" className="block p-2 rounded hover:bg-accent">Dashboard</a>
         <a href="/explore" className="block p-2 rounded hover:bg-accent">Explore Courses</a>
@@ -259,6 +296,8 @@ function CourseDetailModal({ course, isOpen, onClose }: { course: any; isOpen: b
 
 // Course Card Component
 function CourseCard({ course, onClick }: { course: any; onClick: () => void }) {
+  const { addCourse, removeCourse, isInBackpack } = useBackpackStore();
+  
   const renderStars = (stars: number) => {
     return (
       <div className="flex gap-1">
@@ -306,10 +345,15 @@ function CourseCard({ course, onClick }: { course: any; onClick: () => void }) {
         )}
       </div>
       
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-sm text-muted-foreground">
+          {course.examDate ? `📅 ${course.examDate}` : ''}
+        </div>
+      </div>
+      
       <button 
         onClick={(e) => {
           e.stopPropagation(); // Prevent opening modal
-          const { addCourse, removeCourse, isInBackpack } = useBackpackStore.getState();
           if (isInBackpack(course.id)) {
             removeCourse(course.id);
           } else {
@@ -317,13 +361,13 @@ function CourseCard({ course, onClick }: { course: any; onClick: () => void }) {
           }
         }}
         className={`w-full py-2 px-4 rounded transition-all duration-200 flex items-center justify-center gap-2 ${
-          useBackpackStore.getState().isInBackpack(course.id)
+          isInBackpack(course.id)
             ? 'bg-green-600 text-white hover:bg-green-700'
             : 'bg-primary text-primary-foreground hover:bg-primary/90'
         }`}
       >
         <Briefcase size={16} />
-        {useBackpackStore.getState().isInBackpack(course.id) ? 'In Backpack' : 'Add to Backpack'}
+        {isInBackpack(course.id) ? 'In Backpack' : 'Add to Backpack'}
       </button>
     </div>
   );
@@ -503,9 +547,77 @@ function Explore() {
   );
 }
 
+// Backpack Card Component
+function BackpackCard({ course, onRemove, onClick }: { course: any; onRemove: (courseId: string) => void; onClick: () => void }) {
+  const renderStars = (stars: number) => {
+    return (
+      <div className="flex gap-1">
+        {[...Array(5)].map((_, index) => (
+          <Star
+            key={index}
+            size={16}
+            className={index < stars ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div 
+      className="bg-card border rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer transform hover:scale-[1.02] hover:border-primary/30"
+      onClick={onClick}
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className="text-4xl">{course.emoji}</div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent opening modal
+            onRemove(course.id);
+          }}
+          className="text-red-500 hover:text-red-700 transition-colors"
+        >
+          <X size={20} />
+        </button>
+      </div>
+      
+      <h3 className="text-xl font-semibold mb-2">{course.name}</h3>
+      <p className="text-sm text-muted-foreground mb-3">{course.subject}</p>
+      
+      <p className="text-sm text-foreground mb-4 line-clamp-3">{course.description}</p>
+      
+      <div className="flex gap-2 mb-4 overflow-hidden">
+        {course.tags.slice(0, 3).map((tag: string, index: number) => (
+          <span 
+            key={index}
+            className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full whitespace-nowrap flex-shrink-0"
+          >
+            {tag}
+          </span>
+        ))}
+        {course.tags.length > 3 && (
+          <span className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full whitespace-nowrap flex-shrink-0">
+            +{course.tags.length - 3} more
+          </span>
+        )}
+      </div>
+      
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">
+          {course.examDate ? `📅 ${course.examDate}` : ''}
+        </div>
+        {renderStars(course.stars)}
+      </div>
+    </div>
+  );
+}
+
 function Backpack() {
   const { selectedCourses, removeCourse, clearBackpack } = useBackpackStore();
   const { courses, fetchCourses } = useCoursesStore();
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState<string | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Ensure courses are loaded
   useEffect(() => {
@@ -519,6 +631,29 @@ function Backpack() {
   console.log('Backpack - selectedCourses:', selectedCourses);
   console.log('Backpack - courses length:', courses.length);
   console.log('Backpack - backpackCourses length:', backpackCourses.length);
+
+  const handleRemoveCourse = (courseId: string) => {
+    setShowRemoveConfirm(courseId);
+  };
+
+  const confirmRemoveCourse = (courseId: string) => {
+    removeCourse(courseId);
+    setShowRemoveConfirm(null);
+  };
+
+  const cancelRemoveCourse = () => {
+    setShowRemoveConfirm(null);
+  };
+
+  const handleCourseClick = (course: any) => {
+    setSelectedCourse(course);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedCourse(null);
+  };
   
   return (
     <div className="p-8">
@@ -550,57 +685,49 @@ function Backpack() {
             </div>
           ) : (
             backpackCourses.map(course => (
-            <div key={course.id} className="bg-card border rounded-lg p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="text-4xl">{course.emoji}</div>
-                <button
-                  onClick={() => removeCourse(course.id)}
-                  className="text-red-500 hover:text-red-700 transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              
-              <h3 className="text-xl font-semibold mb-2">{course.name}</h3>
-              <p className="text-sm text-muted-foreground mb-3">{course.subject}</p>
-              
-              <p className="text-sm text-foreground mb-4 line-clamp-3">{course.description}</p>
-              
-              <div className="flex gap-2 mb-4 overflow-hidden">
-                {course.tags.slice(0, 3).map((tag: string, index: number) => (
-                  <span 
-                    key={index}
-                    className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full whitespace-nowrap flex-shrink-0"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                {course.tags.length > 3 && (
-                  <span className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full whitespace-nowrap flex-shrink-0">
-                    +{course.tags.length - 3} more
-                  </span>
-                )}
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  {course.meanScore} avg • {course.passRate}% pass
-                </div>
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, index) => (
-                    <Star
-                      key={index}
-                      size={16}
-                      className={index < course.stars ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))
+              <BackpackCard 
+                key={course.id} 
+                course={course} 
+                onRemove={handleRemoveCourse}
+                onClick={() => handleCourseClick(course)}
+              />
+            ))
           )}
         </div>
       )}
+
+      {/* Remove Confirmation Modal */}
+      {showRemoveConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card border rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4">Remove from Backpack</h3>
+            <p className="text-muted-foreground mb-6">
+              Are you sure you want to remove this course from your backpack?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={cancelRemoveCourse}
+                className="px-4 py-2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => confirmRemoveCourse(showRemoveConfirm)}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Course Detail Modal */}
+      <CourseDetailModal 
+        course={selectedCourse} 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+      />
     </div>
   );
 }
