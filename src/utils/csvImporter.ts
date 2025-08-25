@@ -15,6 +15,7 @@ export interface APCourseFromCSV {
   labRequirement: string
   exam: string
   examDate: string
+  pdfUrl: string
 }
 
 export interface APCourse {
@@ -34,6 +35,7 @@ export interface APCourse {
   labRequirement: string
   exam: string
   examDate: string
+  pdfUrl: string
 }
 
 // Utility functions
@@ -109,6 +111,7 @@ export function importCoursesFromCSV(csvData: string): APCourse[] {
         labRequirement: row.labRequirement,
         exam: row.exam,
         examDate: row.examDate,
+        pdfUrl: row.pdfUrl,
       }
     })
 }

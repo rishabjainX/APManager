@@ -5,6 +5,8 @@ import { useBackpackStore } from './store/backpackSlice';
 import { subjects, allTags } from './data/coursesData';
 import { Star, X, Briefcase, Sun, Moon, Monitor } from 'lucide-react';
 import { useTheme } from './components/ThemeProvider';
+import Notes from './pages/Notes';
+
 
 // Simple Sidebar component
 function Sidebar() {
@@ -54,6 +56,7 @@ function Sidebar() {
         <a href="/notes" className="block p-2 rounded hover:bg-accent">Notes</a>
         <a href="/practice" className="block p-2 rounded hover:bg-accent">Practice</a>
         <a href="/settings" className="block p-2 rounded hover:bg-accent">Settings</a>
+
       </nav>
     </div>
   );
@@ -732,15 +735,6 @@ function Backpack() {
   );
 }
 
-function Notes() {
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold text-foreground mb-6">Notes</h1>
-      <p className="text-muted-foreground">Your study notes will appear here</p>
-    </div>
-  );
-}
-
 function Practice() {
   return (
     <div className="p-8">
@@ -773,6 +767,7 @@ function App() {
             <Route path="/notes" element={<Notes />} />
             <Route path="/practice" element={<Practice />} />
             <Route path="/settings" element={<Settings />} />
+
           </Routes>
         </main>
       </div>

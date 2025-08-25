@@ -1,158 +1,114 @@
-# AP Course Manager
+# AP Manager
 
-A comprehensive desktop application for students to manage AP coursework, built with React, TypeScript, and Vite.
+A comprehensive application for managing AP (Advanced Placement) courses, tracking progress, and organizing study notes.
 
-## 🚀 Features
+## Features
 
-- **AP Course Explorer**: Browse all available AP courses with detailed information
-- **Interactive Course Cards**: Hover effects and detailed modals for each course
-- **Smart Filtering**: Search by name, subject, difficulty, and tags
-- **Unit Weightings**: Color-coded unit importance based on exam weight
-- **Exam Information**: Dates, formats, and requirements for each course
-- **College Board Integration**: Direct links to official course descriptions
+### 🎒 Course Management
+- **Explore AP Courses**: Browse all available AP courses with detailed information
+- **Course Backpack**: Add courses to your personal collection for easy access
+- **Course Details**: View comprehensive information including units, exam format, and prerequisites
+- **Progress Tracking**: Monitor your progress across multiple AP courses
 
-## 🛠️ CSV Data Management
+### 📝 Notes System
+- **Structured Notes**: Create notes organized by course, unit, and topic
+- **Status Tracking**: Track your progress through different learning stages:
+  - Not Started
+  - Reviewing in Class
+  - Lesson Taught
+  - Reviewing
+  - Done
+- **Markdown Support**: Write rich notes with markdown formatting
+- **Live Preview**: Toggle between edit and preview modes
+- **Search & Filter**: Find notes quickly with search functionality
 
-The app now uses a **CSV-based data system** that makes it easy to:
-- Add new courses
-- Update existing course information
-- Manage practice questions and resources
-- Keep data synchronized across the app
+### 📊 Progress Dashboard
+- **Visual Progress**: See your progress through AP Physics 1 units and topics
+- **Progress Bars**: Visual representation of completion status
+- **Recent Activity**: Track your latest notes and progress
+- **Statistics**: Overview of courses, notes, and overall progress
 
-### 📁 File Structure
+### 🔄 Data Management
+- **Export/Import**: Backup and restore your notes and progress data
+- **Persistent Storage**: Your data is automatically saved locally
+- **Cross-session**: Progress and notes persist between browser sessions
 
-```
-src/
-├── data/
-│   ├── courses.csv          # Main course data
-│   └── coursesData.ts       # CSV import logic
-├── utils/
-│   ├── csvImporter.ts       # CSV parsing utilities
-│   └── csvHelpers.ts        # CSV export/validation helpers
-└── store/
-    └── coursesSlice.ts      # Zustand store using CSV data
-```
+## AP Physics 1 Course Structure
 
-### 📊 CSV Format
+The app includes a complete AP Physics 1 curriculum structure based on the College Board framework:
 
-Your `courses.csv` file should have these columns:
+### Units Covered:
+1. **Kinematics** (10-16%) - Motion in one and two dimensions
+2. **Dynamics** (16-20%) - Forces and Newton's laws
+3. **Circular Motion & Gravitation** (6-8%) - Uniform circular motion and gravitational forces
+4. **Energy** (20-24%) - Work, energy, and conservation
+5. **Momentum** (10-16%) - Linear momentum and conservation
+6. **Simple Harmonic Motion** (4-6%) - Oscillatory motion
+7. **Torque & Rotational Motion** (10-16%) - Rotational dynamics
+8. **Fluids** (4-6%) - Fluid statics and dynamics
 
-```csv
-id,name,subject,meanScore,passRate,description,emoji,tags,units,bigIdeas,prerequisites,labRequirement,exam,examDate
-```
+Each unit contains detailed topics with learning objectives and status tracking.
 
-#### Example Row:
-```csv
-biology,Biology,Sciences,3.15,68.3,"Introductory college-level biology...",🧬,"life sciences,systems,ecology,genetics","Chemistry of Life:8-11%,Cells:10-13%","Evolution,Energetics,Information Storage & Transmission",High school biology and chemistry,25% of time in labs,"3 hours: 60 multiple choice (50%), 6 free-response (50%)","Monday, May 4, 2026 - 8:00 AM"
-```
+## Getting Started
 
-### 🔧 Adding New Courses
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-1. **Open `src/data/courses.csv`**
-2. **Add a new row** following the format above
-3. **Save the file** - the app automatically reloads the data
-4. **No code changes needed!**
+2. **Run Development Server**:
+   ```bash
+   npm run dev
+   ```
 
-### 📝 CSV Field Details
+3. **Build for Production**:
+   ```bash
+   npm run build
+   ```
 
-| Field | Type | Description | Example |
-|-------|------|-------------|---------|
-| `id` | string | Unique identifier (lowercase, no spaces) | `biology`, `calculus-bc` |
-| `name` | string | Course name | `Biology`, `Calculus BC` |
-| `subject` | string | Subject category | `Sciences`, `Mathematics` |
-| `meanScore` | number | Average AP exam score | `3.15` |
-| `passRate` | number | Percentage of students who pass | `68.3` |
-| `description` | string | Course description | `"Introductory college-level..."` |
-| `emoji` | string | Course emoji | `🧬`, `📊` |
-| `tags` | string | Comma-separated tags | `"life sciences,systems,ecology"` |
-| `units` | string | Unit:weighting pairs | `"Unit 1:10-15%,Unit 2:20-25%"` |
-| `bigIdeas` | string | Comma-separated big ideas | `"Evolution,Energetics"` |
-| `prerequisites` | string | Course prerequisites | `High school biology` |
-| `labRequirement` | string | Lab requirements | `25% of time in labs` |
-| `exam` | string | Exam format | `"3 hours: 60 MC, 6 FRQ"` |
-| `examDate` | string | Exam date | `"Monday, May 4, 2026 - 8:00 AM"` |
+## Usage
 
-## 🚀 Getting Started
+### Adding Courses
+1. Navigate to the "Explore" page
+2. Browse available AP courses
+3. Click on a course to view details
+4. Add it to your backpack
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
+### Taking Notes
+1. Go to the "Notes" page
+2. Select a course, unit, and topic
+3. Click "New Note" to create a note
+4. Use markdown for rich formatting
+5. Toggle preview mode to see formatted content
+6. Update topic status as you progress
 
-### Installation
-```bash
-git clone <your-repo>
-cd apmanager
-npm install
-npm run dev
-```
+### Tracking Progress
+1. View your dashboard for an overview
+2. Monitor progress through individual units
+3. Update topic statuses as you complete sections
+4. Export your data for backup
 
-### Development
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run test         # Run tests
-```
+## Technology Stack
 
-## 🔄 Data Updates
+- **Frontend**: React 18 + TypeScript
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand
+- **Routing**: React Router
+- **Build Tool**: Vite
+- **Icons**: Lucide React
 
-### Adding New Courses
-1. Edit `src/data/courses.csv`
-2. Add new row with all required fields
-3. Save file - app automatically updates
+## Data Structure
 
-### Updating Existing Courses
-1. Find the course row in `courses.csv`
-2. Modify any field values
-3. Save file - changes appear immediately
+The app uses a hierarchical structure:
+- **Courses** → **Units** → **Topics** → **Notes**
+- Each level can have associated metadata and progress tracking
+- Notes are linked to specific topics for organization
+- Status tracking provides progress visibility
 
-### Adding Practice Questions
-Future feature: Add a `practice-questions.csv` file with:
-- Question text
-- Course ID
-- Unit
-- Question type (MCQ/FRQ)
-- Answer and explanation
+## Contributing
 
-## 🎯 Next Features
+This is a personal project for AP course management. The structure is designed to be easily extensible for additional AP courses beyond Physics 1.
 
-- **Backpack System**: Save and organize selected courses
-- **Notes Editor**: Markdown notes with AP tags
-- **Practice Hub**: FRQ and MCQ practice sessions
-- **Progress Tracking**: Monitor study progress per course
-- **Study Planner**: Weekly schedules and reminders
+## License
 
-## 🐛 Troubleshooting
-
-### CSV Import Issues
-- Check that all required fields are filled
-- Ensure proper CSV formatting (commas, quotes)
-- Verify file encoding is UTF-8
-
-### Data Not Loading
-- Check browser console for errors
-- Verify CSV file path is correct
-- Restart development server
-
-### Type Errors
-- Run `npx tsc --noEmit` to check for issues
-- Ensure CSV data matches expected format
-
-## 📚 Resources
-
-- [AP Central](https://apcentral.collegeboard.org/) - Official AP resources
-- [College Board](https://collegeboard.org/) - AP program information
-- [Vite Documentation](https://vitejs.dev/) - Build tool docs
-- [React Documentation](https://react.dev/) - React framework docs
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
+MIT License - feel free to use and modify for your own AP studies!

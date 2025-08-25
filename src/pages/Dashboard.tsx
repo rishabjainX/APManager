@@ -7,25 +7,14 @@ import { useBackpackStore } from '../store/backpackSlice';
 import { useCoursesStore } from '../store/coursesSlice';
 import { useNotesStore } from '../store/notesSlice';
 import { usePracticeStore } from '../store/practiceSlice';
-import { 
-  BookOpen, 
-  Target, 
-  TrendingUp, 
-  Plus, 
-  ArrowRight,
-  Clock,
-  CheckCircle,
-  Circle,
-  Search,
-  Briefcase,
-  Settings
-} from 'lucide-react';
+import { apPhysics1Structure, getStatusColor, getStatusLabel } from '../data/apPhysics1Structure';
+import { BookOpen, FileText, Target, CheckCircle } from 'lucide-react';
 import { formatDate } from '../utils/time';
 
 export function Dashboard() {
-  const { courses: backpackCourses, getCoursesByStatus } = useBackpackStore();
+  const { selectedCourses } = useBackpackStore();
   const { courses: allCourses } = useCoursesStore();
-  const { notes } = useNotesStore();
+  const { notes, topicStatuses, getTopicStatus } = useNotesStore();
   const { attempts } = usePracticeStore();
 
   useEffect(() => {
@@ -35,9 +24,8 @@ export function Dashboard() {
     }
   }, [allCourses.length]);
 
-  const inProgressCourses = getCoursesByStatus('in-progress');
-  const plannedCourses = getCoursesByStatus('planned');
-  const completedCourses = getCoursesByStatus('completed');
+  // Get the full course objects for selected course IDs
+  const backpackCourses = allCourses.filter(course => selectedCourses.includes(course.id));
 
   const totalNotes = notes.length;
   const totalAttempts = attempts.length;
@@ -55,23 +43,21 @@ export function Dashboard() {
     return {
       notes: courseNotes.length,
       attempts: courseAttempts.length,
-      units: course.units.length,
+      units: course.units ? Object.keys(course.units).length : 0,
     };
   };
 
   const getOverallProgress = () => {
     if (backpackCourses.length === 0) return 0;
     
-    const totalUnits = backpackCourses.reduce((sum, backpackCourse) => {
-      const course = allCourses.find(c => c.id === backpackCourse.courseId);
-      return sum + (course?.units.length || 0);
+    const totalUnits = backpackCourses.reduce((sum: number, course) => {
+      return sum + (course.units ? Object.keys(course.units).length : 0);
     }, 0);
     
-    const completedUnits = backpackCourses.reduce((sum, backpackCourse) => {
-      const course = allCourses.find(c => c.id === backpackCourse.courseId);
+    const completedUnits = backpackCourses.reduce((sum: number, course) => {
       if (!course) return sum;
       
-      const courseNotes = notes.filter(n => n.courseId === backpackCourse.courseId);
+      const courseNotes = notes.filter(n => n.courseId === course.id);
       const uniqueUnitsWithNotes = new Set(courseNotes.map(n => n.unitId)).size;
       
       return sum + uniqueUnitsWithNotes;
@@ -80,7 +66,20 @@ export function Dashboard() {
     return totalUnits > 0 ? Math.round((completedUnits / totalUnits) * 100) : 0;
   };
 
-  if (backpackCourses.length === 0) {
+  // Calculate progress for AP Physics 1
+  const physics1Topics = apPhysics1Structure.units.flatMap(unit => unit.topics);
+  const totalTopics = physics1Topics.length;
+  const completedTopics = physics1Topics.filter(topic => 
+    getTopicStatus(apPhysics1Structure.id, topic.unitId, topic.id) === 'done'
+  ).length;
+  const inProgressTopics = physics1Topics.filter(topic => {
+    const status = getTopicStatus(apPhysics1Structure.id, topic.unitId, topic.id);
+    return status === 'reviewing' || status === 'reviewing-in-class' || status === 'lesson-taught';
+  }).length;
+  
+  const progressPercentage = Math.round((completedTopics / totalTopics) * 100);
+  
+  if (selectedCourses.length === 0) {
     return (
       <div className="p-8">
         <div className="max-w-4xl mx-auto">
@@ -95,7 +94,6 @@ export function Dashboard() {
             <div className="space-x-4">
               <Link to="/explore">
                 <Button size="lg">
-                  <Search className="w-4 h-4 mr-2" />
                   Explore Courses
                 </Button>
               </Link>
@@ -108,192 +106,164 @@ export function Dashboard() {
 
   return (
     <div className="p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Track your progress across {backpackCourses.length} AP courses
-          </p>
+      <h1 className="text-3xl font-bold text-foreground mb-6">Dashboard</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-card p-6 rounded-lg border">
+          <h3 className="text-lg font-semibold mb-2">Total Courses</h3>
+          <p className="text-3xl font-bold text-primary">{selectedCourses.length}</p>
         </div>
-
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{backpackCourses.length}</div>
-              <p className="text-xs text-muted-foreground">
-                {inProgressCourses.length} in progress
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Overall Progress</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{getOverallProgress()}%</div>
-              <p className="text-xs text-muted-foreground">
-                Units with notes
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Notes</CardTitle>
-              <Target className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalNotes}</div>
-              <p className="text-xs text-muted-foreground">
-                Across all courses
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Practice Attempts</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalAttempts}</div>
-              <p className="text-xs text-muted-foreground">
-                FRQs and MCQs
-              </p>
-            </CardContent>
-          </Card>
+        <div className="bg-card p-6 rounded-lg border">
+          <h3 className="text-lg font-semibold mb-2">Overall Progress</h3>
+          <p className="text-3xl font-bold text-primary">{getOverallProgress()}%</p>
         </div>
-
-        {/* Course Progress */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Active Courses */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Target className="w-5 h-5 mr-2" />
-                Active Courses
-              </CardTitle>
-              <CardDescription>
-                Courses you're currently working on
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {inProgressCourses.length > 0 ? (
-                inProgressCourses.map((backpackCourse) => {
-                  const course = allCourses.find(c => c.id === backpackCourse.courseId);
-                  const progress = getCourseProgress(backpackCourse.courseId);
-                  
-                  if (!course) return null;
-                  
-                  return (
-                    <div key={backpackCourse.id} className="flex items-center justify-between p-3 rounded-lg border">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="font-medium">{course.name}</h4>
-                          <Badge variant="secondary">{course.subject}</Badge>
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {progress.notes} notes • {progress.attempts} attempts
-                        </div>
-                      </div>
-                      <Link to={`/course/${course.id}`}>
-                        <Button variant="ghost" size="sm">
-                          <ArrowRight className="w-4 h-4" />
-                        </Button>
-                      </Link>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-6 text-muted-foreground">
-                  <Circle className="w-8 h-8 mx-auto mb-2" />
-                  <p>No courses in progress</p>
-                  <p className="text-sm">Start working on a planned course</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Recent Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Clock className="w-5 h-5 mr-2" />
-                Recent Activity
-              </CardTitle>
-              <CardDescription>
-                Your latest notes and practice attempts
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {recentNotes.length > 0 ? (
-                recentNotes.map((note) => {
-                  const course = allCourses.find(c => c.id === note.courseId);
-                  if (!course) return null;
-                  
-                  return (
-                    <div key={note.id} className="flex items-center space-x-3 p-3 rounded-lg border">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium truncate">{note.title}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {course.name} • {formatDate(note.updatedAt)}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-6 text-muted-foreground">
-                  <BookOpen className="w-8 h-8 mx-auto mb-2" />
-                  <p>No recent activity</p>
-                  <p className="text-sm">Start taking notes to see them here</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+        <div className="bg-card p-6 rounded-lg border">
+          <h3 className="text-lg font-semibold mb-2">Total Notes</h3>
+          <p className="text-3xl font-bold text-primary">{totalNotes}</p>
         </div>
-
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>
-              Common tasks and shortcuts
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-4">
-              <Link to="/explore">
-                <Button variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add New Course
-                </Button>
-              </Link>
-              <Link to="/backpack">
-                <Button variant="outline">
-                  <Briefcase className="w-4 h-4 mr-2" />
-                  Manage Backpack
-                </Button>
-              </Link>
-              <Link to="/settings">
-                <Button variant="outline">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
       </div>
+
+      {/* Notes Progress Overview */}
+      <div className="bg-card border rounded-lg p-6 mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <BookOpen className="text-primary" size={24} />
+          <h2 className="text-xl font-semibold">AP Physics 1 Progress</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-primary mb-1">{totalTopics}</div>
+            <div className="text-sm text-muted-foreground">Total Topics</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-green-600 mb-1">{completedTopics}</div>
+            <div className="text-sm text-muted-foreground">Completed</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-blue-600 mb-1">{inProgressTopics}</div>
+            <div className="text-sm text-muted-foreground">In Progress</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-orange-600 mb-1">{totalTopics - completedTopics - inProgressTopics}</div>
+            <div className="text-sm text-muted-foreground">Not Started</div>
+          </div>
+        </div>
+        
+        {/* Progress Bar */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium">Overall Progress</span>
+            <span className="text-sm text-muted-foreground">{progressPercentage}%</span>
+          </div>
+          <div className="w-full bg-secondary rounded-full h-2">
+            <div 
+              className="bg-primary h-2 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+        </div>
+        
+        {/* Unit Progress */}
+        <div className="space-y-3">
+          <h3 className="font-medium text-foreground">Unit Progress</h3>
+          {apPhysics1Structure.units.map((unit) => {
+            const unitTopics = unit.topics;
+            const unitCompleted = unitTopics.filter(topic => 
+              getTopicStatus(apPhysics1Structure.id, unit.id, topic.id) === 'done'
+            ).length;
+            const unitProgress = Math.round((unitCompleted / unitTopics.length) * 100);
+            
+            return (
+              <div key={unit.id} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">{unit.name}</span>
+                  <span className="text-xs text-muted-foreground">({unit.weighting})</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">
+                    {unitCompleted}/{unitTopics.length}
+                  </span>
+                  <div className="w-20 bg-secondary rounded-full h-1.5">
+                    <div 
+                      className="bg-primary h-1.5 rounded-full transition-all duration-300"
+                      style={{ width: `${unitProgress}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Recent Notes */}
+      <div className="bg-card border rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <FileText className="text-primary" size={24} />
+          <h2 className="text-xl font-semibold">Recent Notes</h2>
+        </div>
+        
+        {notes.length > 0 ? (
+          <div className="space-y-3">
+            {notes
+              .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+              .slice(0, 5)
+              .map((note) => (
+                <div key={note.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50">
+                  <div>
+                    <h4 className="font-medium">{note.title}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {note.courseId} • {note.unitId} • {note.topicId}
+                    </p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(note.updatedAt).toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            <FileText size={32} className="mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No notes yet</p>
+            <p className="text-xs">Start taking notes to track your progress</p>
+          </div>
+        )}
+      </div>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>
+            Common tasks and shortcuts
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-4">
+            <Link to="/explore">
+              <Button variant="outline">
+                Add New Course
+              </Button>
+            </Link>
+            <Link to="/backpack">
+              <Button variant="outline">
+                Manage Backpack
+              </Button>
+            </Link>
+            <Link to="/notes">
+              <Button variant="outline">
+                View Notes
+              </Button>
+            </Link>
+            <Link to="/settings">
+              <Button variant="outline">
+                Settings
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
